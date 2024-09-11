@@ -38,27 +38,31 @@
 
 import rospy
 from std_msgs.msg import String
-from week0.msg import Pesron
+from week0.msg import Person
 
 def talker():
-    pub = rospy.Publisher('chatter', String, queue_size=10)
+    # Create two separate publishers
+    pub_string = rospy.Publisher('chatter', String, queue_size=10)
+    pub_person = rospy.Publisher('person_chatter', Person, queue_size=10)
+    
     rospy.init_node('talker', anonymous=True)
-    rate = rospy.Rate(10) # 10hz
-    pub = rospy.Publisher('person_chatter', Person, queue_size=10)
-    rospy.init_node('talker', anonymous=True)
-    rate = rospy.Rate(10) # 10hz
+    rate = rospy.Rate(1)  # 10hz
+    
     while not rospy.is_shutdown():
+        # Publishing a String message
         hello_str = "hello world %s" % rospy.get_time()
         rospy.loginfo(hello_str)
-        pub.publish(hello_str)
+        pub_string.publish(hello_str)
         rate.sleep()
+
+        # Publishing a Person message
         person_msg = Person()
         person_msg.x = 1.0
         person_msg.y = 2.0
         person_msg.z = 3.0
         rospy.loginfo("Publishing Person: x=%f, y=%f, z=%f", person_msg.x, person_msg.y, person_msg.z)
-        pub.publish(person_msg)
-	rate.sleep()
+        pub_person.publish(person_msg)
+        rate.sleep()
 
 if __name__ == '__main__':
     try:
