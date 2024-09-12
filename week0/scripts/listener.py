@@ -1,3 +1,6 @@
+#Ethan Partain
+#Hri 491
+#
 #!/usr/bin/env python
 # Software License Agreement (BSD License)
 #
