@@ -1,3 +1,6 @@
+# Ethan Partain
+#Hri 491
+#
 #!/usr/bin/env python
 # Software License Agreement (BSD License)
 #
@@ -46,7 +49,7 @@ def talker():
     pub_person = rospy.Publisher('person_chatter', Person, queue_size=10)
     
     rospy.init_node('talker', anonymous=True)
-    rate = rospy.Rate(1)  # 10hz
+    rate = rospy.Rate(1)  # 10hz (originally)
     
     while not rospy.is_shutdown():
         # Publishing a String message
