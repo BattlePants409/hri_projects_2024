@@ -41,23 +41,25 @@
 
 import rospy
 from std_msgs.msg import String
+from week0.msg import Person
 
-def callback(data):
-    rospy.loginfo(rospy.get_caller_id() + 'I heard %s', data.data)
+def string_callback(data):
+    rospy.loginfo(rospy.get_caller_id() + ' I heard %s', data.data)
+
+def person_callback(data):
+    rospy.loginfo(rospy.get_caller_id() + ' I heard Person: x=%f, y=%f, z=%f', data.x, data.y, data.z)
 
 def listener():
-
-    # In ROS, nodes are uniquely named. If two nodes with the same
-    # name are launched, the previous one is kicked off. The
-    # anonymous=True flag means that rospy will choose a unique
-    # name for our 'listener' node so that multiple listeners can
-    # run simultaneously.
     rospy.init_node('listener', anonymous=True)
 
-    rospy.Subscriber('chatter', String, callback)
+    # Subscribe to the 'chatter' topic for String messages
+    rospy.Subscriber('chatter', String, string_callback)
 
-    # spin() simply keeps python from exiting until this node is stopped
+    # Subscribe to the 'person_chatter' topic for Person messages
+    rospy.Subscriber('person_chatter', Person, person_callback)
+
     rospy.spin()
 
 if __name__ == '__main__':
     listener()
+

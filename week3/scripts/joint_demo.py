@@ -3,7 +3,30 @@
 import rospy
 import math
 from sensor_msgs.msg import JointState
-from time import sleep
+
+def execute_sequence(pub, sequence, joint_names, delay):
+    """
+    Publishes a sequence of joint positions for the Nao robot.
+    
+    :param pub: The ROS publisher for joint states.
+    :param sequence: A list of joint positions sequences to execute.
+    :param joint_names: The names of the joints to move.
+    :param delay: Delay (in seconds) between each position change.
+    """
+    for joint_positions in sequence:
+        # Create a JointState message
+        js = JointState()
+        js.header.stamp = rospy.get_rostime()
+        js.header.frame_id = "Torso"
+        js.name = joint_names
+        js.position = joint_positions
+
+        # Publish the joint states
+        pub.publish(js)
+        rospy.loginfo(js)
+
+        # Delay before moving to the next joint state
+        rospy.sleep(delay)
 
 def talker():
     pub = rospy.Publisher('joint_states', JointState, queue_size=10)
@@ -14,8 +37,8 @@ def talker():
         "HeadYaw", "HeadPitch", "LHipYawPitch", "LHipRoll", "LHipPitch",
         "LKneePitch", "LAnklePitch", "LAnkleRoll", "RHipRoll", "RHipPitch",
         "RKneePitch", "RAnklePitch", "RAnkleRoll", "LShoulderPitch", "LShoulderRoll",
-        "LElbowYaw", "LElbowRoll", "LWristYaw", "LHand", "RShoulderPitch",
-        "RShoulderRoll", "RElbowYaw", "RElbowRoll", "RWristYaw", "RHand"
+        "LElbowYaw", "LElbowRoll", "LHand", "RShoulderPitch",
+        "RShoulderRoll", "RElbowYaw", "RElbowRoll", "RHand"
     ]
 
     # Animation sequences
@@ -35,33 +58,19 @@ def talker():
 
     # Raise Both Arms
     raise_both_arms_sequence = [
-        [0 if name not in ["LShoulderPitch", "RShoulderPitch"] else math.radians(-90) for name in joint_names],  # Arms up
+        [0 if name not in ["LShoulderPitch", "RShoulderPitch"] else math.radians(-1.57) for name in joint_names],  # Arms up (90 degrees in radians)
         [0] * len(joint_names)  # Return to neutral
     ]
-
-    # Combine all animations into a single sequence
-    joint_positions_sequence = nod_yes_sequence + bow_sequence + raise_both_arms_sequence
 
     # Delay between each position change (in seconds)
     delay_between_changes = 2
 
-    # Do each step in the combined sequence
-    for joint_positions in joint_positions_sequence:
-        # Create a JointState message
-        js = JointState()
-        js.header.stamp = rospy.get_rostime()
-        js.header.frame_id = "Torso"
-        js.name = joint_names
-        js.position = joint_positions
-
-        # Publish the joint states
-        pub.publish(js)
-        
-        # Log the published joint state
-        rospy.loginfo(js)
-
-        # Delay before moving to the next joint state
-        sleep(delay_between_changes)
+    # Main loop
+    while not rospy.is_shutdown():
+        # Execute each sequence
+        execute_sequence(pub, nod_yes_sequence, joint_names, delay_between_changes)
+        execute_sequence(pub, bow_sequence, joint_names, delay_between_changes)
+        execute_sequence(pub, raise_both_arms_sequence, joint_names, delay_between_changes)
 
 if __name__ == '__main__':
     try:
