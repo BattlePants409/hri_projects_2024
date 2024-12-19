@@ -20,7 +20,7 @@ class SpeechCommandGestureNode:
     def perform_wave(self, msg):
         rospy.loginfo("Performing wave gesture")
         # Simulate a wave by modifying arm joint states
-        self.update_arm_position(msg, "RShoulderPitch", 1.0)  # Example values
+        self.update_arm_position(msg, "RShoulderPitch", 1.0)  
         self.update_arm_position(msg, "RShoulderRoll", 0.5)
 
     def perform_nod(self, msg):

@@ -18,7 +18,7 @@ class TTSAndGestureNode:
 
     def perform_wave(self):
         rospy.loginfo("Performing wave gesture")
-        self.update_arm_position("RShoulderPitch", 1.0)  # Example values
+        self.update_arm_position("RShoulderPitch", 1.0)
         self.update_arm_position("RShoulderRoll", 0.5)
 
     def perform_nod(self):
